@@ -1,23 +1,20 @@
 import os
-from ratelimit import limits, sleep_and_retry
 from gtm_gear import Service, Container, Workspace
 from helpers import delete_unused_triggers, delete_unused_variables
-import time
 from config import config
 
-# Rate limit settings
-CALLS = 15
-PERIOD = 60
 
 # Set the GTM API config folder environment variable
 os.environ["GTM_API_CONFIG_FOLDER"] = config["GTM_API_CONFIG_FOLDER"]
 
-# Initialize the GTM service
-service = Service()
-
 # Retrieve settings from configuration
 delete_paused_tags = config["delete_paused_tags"]
 workspace_name = config["workspace_name"]
+requests_per_minute = config["requests_per_minute"]
+
+# Initialize the GTM service
+service = Service()
+service.set_ratelimit(requests_per_minute, 60)
 
 # Get the list of accounts
 def get_accounts_list():
@@ -65,15 +62,12 @@ def process_containers(account_id):
     for container in containers_list:
         process_container(account_id, container)
         print(f'Account: {account_id}, Container: {container} - Cleanup DONE')
-        time.sleep(60)
 
-@sleep_and_retry
-@limits(calls=CALLS, period=PERIOD)
+
 def main():
     accounts_list = get_accounts_list()
     for account_id in accounts_list:
         process_containers(account_id)
-        time.sleep(60)
 
 # Run the main function
 if __name__ == "__main__":
