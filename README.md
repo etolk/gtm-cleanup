@@ -2,7 +2,7 @@
 
 ## Overview
 
-This tool is designed to clean up all triggers and variables in Google Tag Manager that don't have any dependencies, as well as paused tags, to maintain a clean container environment. It builds upon the excellent work done in the [gtm-gear project](https://github.com/ArtemKorneevGA/gtm-gear). Special thanks to [Artem Korneev](https://www.linkedin.com/in/artem-korneev/).
+This tool is designed to clean up all triggers and variables in Google Tag Manager that don’t have any dependencies, as well as paused tags and tags with custom firing schedules that have expired, to maintain a clean container environment. It builds upon the excellent work done in the [gtm-gear project](https://github.com/ArtemKorneevGA/gtm-gear). Special thanks to [Artem Korneev](https://www.linkedin.com/in/artem-korneev/).
 
 ## Pre-requirements
 

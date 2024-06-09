@@ -1,3 +1,6 @@
+from datetime import datetime, timezone
+
+
 def delete_unused_triggers(source_workspace):
     while delete_triggers(source_workspace) > 0:
         pass
@@ -38,3 +41,20 @@ def delete_variable(variable):
         print(f"Delete variable: {variable.name}")
         variable.delete()
         return True
+    
+def delete_paused_tags(source_workspace):
+    print("Deleting paused tags")
+    for tag in [tag for tag in source_workspace.tags if tag.isPaused()]:
+        tag.delete()
+        print(f"Deleted tag: {tag.name}")
+
+def delete_expired_tags(source_workspace):
+    print("Deleting expired tags")
+    for tag in [tag for tag in source_workspace.tags]:
+        if 'scheduleEndMs' in tag.data:
+            schedule_end_ms = int(tag.data['scheduleEndMs'])
+            schedule_end_date = datetime.fromtimestamp(schedule_end_ms / 1000.0, tz=timezone.utc)
+            current_date = datetime.now(tz=timezone.utc)
+            if schedule_end_date < current_date:
+                tag.delete()
+                print(f"Deleted tag: {tag.name}")

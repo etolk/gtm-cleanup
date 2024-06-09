@@ -1,6 +1,6 @@
 import os
 from gtm_gear import Service, Container, Workspace
-from helpers import delete_unused_triggers, delete_unused_variables
+from helpers import *
 from config import config
 
 
@@ -8,7 +8,8 @@ from config import config
 os.environ["GTM_API_CONFIG_FOLDER"] = config["GTM_API_CONFIG_FOLDER"]
 
 # Retrieve settings from configuration
-delete_paused_tags = config["delete_paused_tags"]
+include_paused_tags = config["include_paused_tags"]
+include_expired_tags = config["include_expired_tags"]
 workspace_name = config["workspace_name"]
 requests_per_minute = config["requests_per_minute"]
 
@@ -41,12 +42,12 @@ def process_container(account_id, container):
     source_workspace = Workspace(source_container, workspace_name)
     
     # Optionally delete paused tags
-    if delete_paused_tags:
-        print("Delete paused tags")
-        for tag in [tag for tag in source_workspace.tags if tag.isPaused()]:
-            tag.delete()
-            print(f"Deleted tag: {tag.name}")
-        print("Delete paused tags DONE")
+    if include_paused_tags:
+        delete_paused_tags(source_workspace)
+
+    # Optionally delete expired tags
+    if include_expired_tags:
+        delete_expired_tags(source_workspace)
         
     # Delete unused triggers and variables
     print("Deleting unused triggers")

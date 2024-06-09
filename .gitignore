@@ -1,6 +1,5 @@
-/__pycache__
-/cache
-/client_secrets.json
+/*cache*
+/client_secrets*
 /gtm_clean.ipynb
 /tagmanager.dat
 /venv
